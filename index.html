@@ -3,9 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Electron App</title>
+  <title>Gate Pass Form</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Hello, Electron!</h1>
+  <div class="container">
+    <h1>Gate Pass Form</h1>
+    <form id="user-form">
+      
+      <div class="form-group">
+        <label for="passType">Pass Type:</label>
+        <select id="passType" name="passType" required>
+          <option value="Outward">Outward</option>
+          <option value="Inward">Inward</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" value="${new Date().toISOString().split('T')[0]}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="serialNumber">Serial Number:</label>
+        <input type="text" id="serialNumber" name="serialNumber" value="Will be auto-generated" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="partyName">Party Name:</label>
+        <input type="text" id="partyName" name="partyName" placeholder="Enter party name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" placeholder="Enter address" required>
+      </div>
+
+      <div class="form-group">
+        <label for="vehicleNo">Vehicle Number:</label>
+        <input type="text" id="vehicleNo" name="vehicleNo" placeholder="Enter vehicle number" required>
+      </div>
+
+      <div class="form-group">
+        <label for="driverName">Driver Name:</label>
+        <input type="text" id="driverName" name="driverName" placeholder="Enter driver name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="3" placeholder="Enter description of the goods" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="weight">Weight:</label>
+        <input type="text" id="weight" name="weight" placeholder="Enter weight" required>
+      </div>
+
+      <button type="submit">Generate and Print PDF</button>
+    </form>
+  </div>
+  <script src="renderer.js"></script>
 </body>
 </html>
