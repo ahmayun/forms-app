@@ -1,7 +1,19 @@
 // document.addEventListener('DOMContentLoaded', () => {
     console.log("domcontentloaded")
     const { ipcRenderer } = require('electron');
-  
+    const settingsButton = document.getElementById('settingsButton');
+    const savePathOption = document.getElementById('savePathOption');
+
+    // Set Save Path Option
+    savePathOption.addEventListener('click', async () => {
+        const selectedPath = await ipcRenderer.invoke('select-save-path');
+        if (selectedPath) {
+        console.log(`Save path set to: ${selectedPath}`);
+        }
+    });
+
+
+
     const form = document.getElementById('user-form');
     
     if (form) {

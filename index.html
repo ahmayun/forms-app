@@ -9,8 +9,16 @@
 <body>
   <div class="container">
     <h1>Gate Pass Form</h1>
+    
+    <!-- Settings Button and Dropdown -->
+    <div class="settings">
+      <button id="settingsButton">⚙️ Settings</button>
+      <div id="settingsDropdown" class="dropdown-content">
+        <a href="#" id="savePathOption">Set Save Path</a>
+      </div>
+    </div>
+
     <form id="user-form">
-      
       <div class="form-group">
         <label for="passType">Pass Type:</label>
         <select id="passType" name="passType" required>

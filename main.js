@@ -1,8 +1,15 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const { dialog } = require('electron');
-const fs = require('fs');
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import fs from 'fs';
+import path from 'path';
+import Store from 'electron-store';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
+// Get the equivalent of __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const store = new Store(); // For persistent storage
 function createWindow() {
 
   const win = new BrowserWindow({
@@ -17,6 +24,20 @@ function createWindow() {
 
   win.loadFile('index.html');
 
+  // Handle save path selection
+    ipcMain.handle('select-save-path', async () => {
+        const result = await dialog.showOpenDialog({
+        properties: ['openDirectory']
+        });
+    
+        if (!result.canceled && result.filePaths.length > 0) {
+        const selectedPath = result.filePaths[0];
+        store.set('savePath', selectedPath); // Save the path to persistent storage
+        return selectedPath;
+        }
+        return null;
+    });
+
   ipcMain.handle('print-to-pdf', async (event, formData) => {
     console.log("handling ipc")
     try {
@@ -24,7 +45,12 @@ function createWindow() {
 
       const now = new Date();
       const serialNumber = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
-
+      // Get the save path from persistent storage
+      let savePath = store.get('savePath');
+      if (!savePath) {
+      // Default to the current directory if no path is set
+        savePath = path.join(__dirname, 'generated-forms');
+      }
 
       const pdfWindow = new BrowserWindow({ show: false });
       await pdfWindow.loadURL(`data:text/html;charset=UTF-8,${encodeURIComponent(`
@@ -132,13 +158,12 @@ function createWindow() {
       </html>
     `)}`);
   
-      const dirPath = path.join(__dirname, 'generated-forms');
       // Check if the directory exists, and if not, create it
-      if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
+      if (!fs.existsSync(savePath)) {
+        fs.mkdirSync(savePath, { recursive: true });
       }
 
-      const pdfPath = path.join(dirPath, `form_${formData.passType.toLowerCase()}_${serialNumber}.pdf`);
+      const pdfPath = path.join(savePath, `form_${formData.passType.toLowerCase()}_${serialNumber}.pdf`);
       const pdf = await pdfWindow.webContents.printToPDF({});
       fs.writeFileSync(pdfPath, pdf);
   
