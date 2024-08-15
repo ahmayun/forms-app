@@ -21,7 +21,6 @@ function createWindow() {
     console.log("handling ipc")
     try {
 
-      const pdfPath = path.join(__dirname, 'form.pdf');
 
       const now = new Date();
       const serialNumber = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
@@ -133,6 +132,13 @@ function createWindow() {
       </html>
     `)}`);
   
+      const dirPath = path.join(__dirname, 'generated-forms');
+      // Check if the directory exists, and if not, create it
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+      }
+
+      const pdfPath = path.join(dirPath, `form_${formData.passType.toLowerCase()}_${serialNumber}.pdf`);
       const pdf = await pdfWindow.webContents.printToPDF({});
       fs.writeFileSync(pdfPath, pdf);
   

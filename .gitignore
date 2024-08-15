@@ -42,4 +42,4 @@ logs/
 # System files
 *.swp
 *~
-form.pdf
+form*.pdf

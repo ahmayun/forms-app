@@ -20,8 +20,10 @@
             weight: document.getElementById('weight').value,
           };
       
-  
+
         await ipcRenderer.invoke('print-to-pdf', formData);
+        // Clear the form fields after submission
+        document.getElementById('user-form').reset();
       });
     } else {
       console.error("Form element not found!");
